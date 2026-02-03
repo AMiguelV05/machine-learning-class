@@ -1,7 +1,9 @@
-import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
+import numpy as np
+from tabulate import tabulate
+
 
 def calculate_linear_regression():
     # Creating the independent array with arange()0-15 in the necessary structure (reshape)
@@ -34,8 +36,9 @@ def calculate_linear_regression():
 
     # We use the prediction function and capture m, b.
     prediction = model.predict(X)
-    print(f"Steep: {model.coef_[0]}")
-    print(f"Intersection: {model.intercept_}")
+    print(f"Slope: {model.coef_[0]:.5f}")
+    print(f"Intersection: {model.intercept_:.5f}")
+    print(f"Score: {model.score(X_test, y_test):.5f}")
 
     # Drawing the linear function over the scattered data
     plt.plot(X, prediction, color='red', label='Prediction')
@@ -45,6 +48,17 @@ def calculate_linear_regression():
     plt.title("Final prediction")
     plt.legend()
     plt.show()
+
+    # Table array made of arrays
+    table = []
+    # For each element in X (year), y (actual salary), prediction (predicted salary). We append 'em to the table array
+    for year, actualSalary, predictedSalary in zip(X, y, prediction):
+        table.append([year, actualSalary, predictedSalary])
+
+    # We call the tabulate function within the print and add the table parameter,
+    # the headers of our table, and it's style
+    print(tabulate(table, headers=["Years", "Real salary", "Predicted salary"], tablefmt="fancy_grid"))
+
 
 def main():
     calculate_linear_regression()
