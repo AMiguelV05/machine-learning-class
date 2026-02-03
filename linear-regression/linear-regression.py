@@ -11,6 +11,25 @@ def calculate_linear_regression():
     # Dependent array
     y = [12, 14, 17, 19, 22, 25, 27, 30, 32, 35, 42, 44, 46, 48, 51, 55]
 
+    # Using train_test_split with an 80(train_size)-20(test_size) proportion
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Creating the linear model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # We use the prediction function and capture m, b, and calculate the score.
+    prediction = model.predict(X)
+    print(f"Slope: {model.coef_[0]:.5f}")
+    print(f"Intersection: {model.intercept_:.5f}")
+    print(f"Score: {model.score(X_test, y_test):.5f}")
+
+    # Calling the functions to create the charts and the comparison table
+    create_charts(X, y, X_train, y_train, X_test, y_test, prediction)
+    create_comparison_table(X, y, prediction)
+
+
+def create_charts(X, y, X_train, y_train, X_test, y_test, prediction):
     # Showing the original data
     plt.scatter(X, y)
     plt.xlabel("Years of experience")
@@ -18,10 +37,7 @@ def calculate_linear_regression():
     plt.title("Original data")
     plt.show()
 
-    # Using train_test_split with an 80(train_size)-20(test_size) proportion
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-    # A graphic that shows the proportion of training and testing data
+    # A chart that shows the proportion of training and testing data
     plt.scatter(X_train, y_train, color='blue', label='Train data')
     plt.scatter(X_test, y_test, color='red', label='Test data')
     plt.xlabel("Years of experience")
@@ -29,16 +45,6 @@ def calculate_linear_regression():
     plt.title("Train-Test data proportion")
     plt.legend()
     plt.show()
-
-    # Creating the linear model
-    model = LinearRegression()
-    model.fit(X_train, y_train)
-
-    # We use the prediction function and capture m, b.
-    prediction = model.predict(X)
-    print(f"Slope: {model.coef_[0]:.5f}")
-    print(f"Intersection: {model.intercept_:.5f}")
-    print(f"Score: {model.score(X_test, y_test):.5f}")
 
     # Drawing the linear function over the scattered data
     plt.plot(X, prediction, color='red', label='Prediction')
@@ -49,6 +55,8 @@ def calculate_linear_regression():
     plt.legend()
     plt.show()
 
+
+def create_comparison_table(X, y, prediction):
     # Table array made of arrays
     table = []
     # For each element in X (year), y (actual salary), prediction (predicted salary). We append 'em to the table array
