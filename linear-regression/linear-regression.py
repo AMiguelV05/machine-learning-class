@@ -58,14 +58,17 @@ def create_charts(X, y, X_train, y_train, X_test, y_test, prediction):
 
 def create_comparison_table(X, y, prediction):
     # Table array made of arrays
+    manualPrediction = [10.65443, 13.55884, 16.46325, 19.36766, 22.27207, 25.17648, 28.08089, 30.98530, 33.88971,
+                        36.79412, 39.69853, 42.60294, 45.50735, 48.41176, 51.31617, 54.22058]
     table = []
     # For each element in X (year), y (actual salary), prediction (predicted salary). We append 'em to the table array
-    for year, actualSalary, predictedSalary in zip(X, y, prediction):
-        table.append([year, actualSalary, predictedSalary])
+    for year, actualSalary, predictedSalary, manualSalary in zip(X, y, prediction, manualPrediction):
+        table.append([year, actualSalary, f"{predictedSalary:.5f}", f"{manualSalary:.5f}"])
 
     # We call the tabulate function within the print and add the table parameter,
     # the headers of our table, and it's style
-    print(tabulate(table, headers=["Years", "Real salary", "Predicted salary"], tablefmt="fancy_grid"))
+    print(tabulate(table, headers=["Years", "Real salary", "Predicted salary", "Manual predicted salary"],
+                   tablefmt="fancy_grid"))
 
 
 def main():
