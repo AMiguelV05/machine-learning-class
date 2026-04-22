@@ -1,7 +1,9 @@
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 # Reading the dataset
 def load_data():
@@ -30,7 +32,7 @@ def visualization(df, X_normalized, result, method, max_clusters):
         cut_distance = 0
     # Create the dendrogram, set the labels and draw the cut line
     dn = dendrogram(result)
-    plt.title(f'Dendrogram using {method}')
+    plt.title(f'Dendrogram using {method} linkage')
     plt.axhline(y=cut_distance, linestyle='--', color='r', label=f'Cut for {max_clusters} clusters')
     plt.legend()
     plt.show()
@@ -40,18 +42,30 @@ def visualization(df, X_normalized, result, method, max_clusters):
     for i in range(1, max_clusters + 1):
         plt.scatter(X_normalized[labels == i, 0], X_normalized[labels == i, 1], label=f'Cluster {i}')
     # Set title, labels, and showing the chart
-    plt.title(f'Scatter chart using {method}')
+    plt.title(f'Scatter chart using {method} linkage')
     plt.xlabel(df.columns[0])
     plt.ylabel(df.columns[1])
     plt.legend()
     plt.show()
     # Create a new DataFrame with clusters and the actual iris classes
     comparison = pd.DataFrame({'Clusters': labels, 'Actual': df['iris']})
-    # Create the table from the columns of the previous DataFrame
-    table = pd.crosstab(comparison['Clusters'], comparison['Actual'])
-    print(f"\nCOMPARISON TABLE FOR THE METHOD {method.upper()}\n")
-    print(table)
+    # Create a numPy array of zeros of object type with size = labels
+    map_prediction = np.zeros_like(labels, dtype=object)
+    # For each cluster
+    for i in range(1, max_clusters + 1):
+        # Get the iris mode from the clusters
+        majority_class = comparison[comparison['Clusters'] == i]['Actual'].mode()[0]
+        # Replace the 0's to the name of the resultant classes from the previous calculation
+        map_prediction[labels == i] = majority_class
 
+    # Get the classes we have on the dataset
+    real_classes = df['iris'].unique()
+    # Create the confusion matrix with the real classes and the predictions
+    confusionM = confusion_matrix(df['iris'], map_prediction)
+    display_matrix = ConfusionMatrixDisplay(confusionM, display_labels=real_classes)
+    display_matrix.plot()
+    plt.title(f'Confusion Matrix for {method} linkage')
+    plt.show()
 
 
 def main():
